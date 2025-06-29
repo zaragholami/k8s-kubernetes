@@ -5,18 +5,19 @@
 ip link
 cat /sys/class/dmi/id/product_uuid
 ```
-# disable swap
-# comment section swap in /etc/fstab and reboot for permanent change
+## disable swap
+##comment section swap in /etc/fstab and reboot for permanent change
 ```
 vi /etc/fstab
 reboot
 ```
-# verify disabled free -m
-# Update and Upgrade
+##verify disabled free -m
+## Update and Upgrade
 ```apt update
 apt upgrade -y
 ```
-# Dns electro in /etc/resolve.conf -->78.157.42.100
+## Dns electro in /etc/resolve.conf -->78.157.42.100
+# installation
 # for install kubernetes We Used Containerd so First we should install containerd
 ```
 cd /usr/local/
@@ -27,7 +28,7 @@ mv containerd.service /usr/lib/systemd/system/
 systemctl daemon-reload
 systemctl enable --now containerd.service
 ```
-# install runc --> for namespace and cgroup
+## install runc --> for namespace and cgroup
 ```
 wget https://github.com/opencontainers/runc/releases/download/v1.1.12/runc.amd64
 install -m 755 runc.amd64 /usr/local/sbin/runc
