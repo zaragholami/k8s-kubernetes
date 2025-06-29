@@ -1,51 +1,51 @@
 
 ## Pre-installation Requirements
-##Ensure Unique MAC Address & UUID 
+Ensure Unique MAC Address & UUID 
 ```
 ip link            # Check MAC address
 cat /sys/class/dmi/id/product_uuid    # Check UUID
 ```
-##Disable swap
-###Kubernetes requires swap to be disabled.
+Disable swap
+Kubernetes requires swap to be disabled.
 ```
 sudo sed -i.bak '/ swap / s/^/#/' /etc/fstab
 sudo swapoff -a
 sudo reboot
 
 ```
-##Verify Swap is Disabled
+Verify Swap is Disabled
 ```
 free -m
 ```
-##Update System
+Update System
 ```
 sudo apt update && sudo apt upgrade -y
 
 ```
-##Set Static DNS
-###Use DNS 78.157.42.100 (Electro).
+Set Static DNS
+Use DNS 78.157.42.100 (Electro).
 
 ## Install containerd (Kubernetes Container Runtime)
-##Step 1: Install containerd
+Step 1: Install containerd
 ```
 cd /usr/local/
 wget https://github.com/containerd/containerd/releases/download/v1.6.30/containerd-1.6.30-linux-amd64.tar.gz
 tar xzf containerd-1.6.30-linux-amd64.tar.gz
 ```
-##Step 2: Setup systemd service for containerd
+Step 2: Setup systemd service for containerd
 ```
 wget https://raw.githubusercontent.com/containerd/containerd/main/containerd.service
 mv containerd.service /usr/lib/systemd/system/
 systemctl daemon-reload
 systemctl enable --now containerd.service
 ```
-##Step 3: Install runc (for namespaces & cgroups)
+Step 3: Install runc (for namespaces & cgroups)
 ```
 wget https://github.com/opencontainers/runc/releases/download/v1.1.12/runc.amd64
 install -m 755 runc.amd64 /usr/local/sbin/runc
 runc --version
 ```
-##Step 4: Configure containerd
+Step 4: Configure containerd
 ```
 mkdir -p /etc/containerd
 containerd config default | sudo tee /etc/containerd/config.toml
