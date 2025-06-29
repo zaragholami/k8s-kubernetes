@@ -16,7 +16,7 @@ reboot
 ```apt update
 apt upgrade -y
 ```
-##Dns electro in /etc/resolve.conf -->78.157.42.100
+##Set Dns electro in /etc/resolve.conf -->78.157.42.100
 # installation
 #for install kubernetes We Used Containerd so First we should install containerd
 ```
