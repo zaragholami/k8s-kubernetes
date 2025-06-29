@@ -1,0 +1,31 @@
+Requirements befor installation
+1-check MAC addrress and UUID for be not same Mac in nods 
+ip link
+cat /sys/class/dmi/id/product_uuid
+2-disable swap
+comment section swap in /etc/fstab
+reboot
+verify with free -m
+3-Update and Upgrade
+apt update
+apt upgrade -y
+4-Dns electro in /etc/resolve.conf -->78.157.42.100
+for install kubernetes We Used Containerd so First we should install containerd
+5-cd /usr/local/
+6-wget https://github.com/containerd/containerd/releases/download/v1.6.30/containerd-1.6.30-linux-amd64.tar.gz
+tar xzf containerd-1.6.30-linux-amd64.tar.gz
+7-wget https://raw.githubusercontent.com/containerd/containerd/main/containerd.service
+8-mv containerd.service /usr/lib/systemd/system/
+9-systemctl daemon-reload
+10-systemctl enable --now containerd.service
+install runc --> for namespace and cgroup
+11-wget https://github.com/opencontainers/runc/releases/download/v1.1.12/runc.amd64
+12-install -m 755 runc.amd64 /usr/local/sbin/runc
+13-runc --version
+14-containerd config default | sudo tee /etc/containerd/config.toml
+15-sudo systemctl daemon-reload
+16-systemctl restart containerd
+17-wget https://github.com/containernetworking/plugins/releases/download/v1.4.0/cni-plugins-linux-amd64-v1.4.0.tgz
+18-mkdir -p /opt/cni/bin
+19-tar -xzvf cni-plugins-linux-amd64-v1.4.0.tgz -C /opt/cni/bin
+
