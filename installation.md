@@ -1,41 +1,59 @@
 
-## Requirements befor installation
-##check MAC addrress and UUID for be not same Mac in nods 
+## Pre-installation Requirements
+##Ensure Unique MAC Address & UUID 
 ```
-ip link
-cat /sys/class/dmi/id/product_uuid
+ip link            # Check MAC address
+cat /sys/class/dmi/id/product_uuid    # Check UUID
 ```
-##disable swap
-##comment section swap in /etc/fstab and reboot for permanent change
+##Disable swap
+###Kubernetes requires swap to be disabled.
 ```
-vi /etc/fstab
-reboot
+sudo sed -i.bak '/ swap / s/^/#/' /etc/fstab
+sudo swapoff -a
+sudo reboot
+
 ```
-##verify disabled free -m
-##Update and Upgrade
-```apt update
-apt upgrade -y
+##Verify Swap is Disabled
 ```
-##Set Dns electro in /etc/resolve.conf -->78.157.42.100
-# installation
-#for install kubernetes We Used Containerd so First we should install containerd
+free -m
+```
+##Update System
+```
+sudo apt update && sudo apt upgrade -y
+
+```
+##Set Static DNS
+###Use DNS 78.157.42.100 (Electro).
+
+## Install containerd (Kubernetes Container Runtime)
+##Step 1: Install containerd
 ```
 cd /usr/local/
 wget https://github.com/containerd/containerd/releases/download/v1.6.30/containerd-1.6.30-linux-amd64.tar.gz
 tar xzf containerd-1.6.30-linux-amd64.tar.gz
+```
+##Step 2: Setup systemd service for containerd
+```
 wget https://raw.githubusercontent.com/containerd/containerd/main/containerd.service
 mv containerd.service /usr/lib/systemd/system/
 systemctl daemon-reload
 systemctl enable --now containerd.service
 ```
-##install runc --> for namespace and cgroup
+##Step 3: Install runc (for namespaces & cgroups)
 ```
 wget https://github.com/opencontainers/runc/releases/download/v1.1.12/runc.amd64
 install -m 755 runc.amd64 /usr/local/sbin/runc
 runc --version
+```
+##Step 4: Configure containerd
+```
+mkdir -p /etc/containerd
 containerd config default | sudo tee /etc/containerd/config.toml
 sudo systemctl daemon-reload
 systemctl restart containerd
+```
+## Install CNI Plugins (Container Network Interface)
+```
 wget https://github.com/containernetworking/plugins/releases/download/v1.4.0/cni-plugins-linux-amd64-v1.4.0.tgz
 mkdir -p /opt/cni/bin
 tar -xzvf cni-plugins-linux-amd64-v1.4.0.tgz -C /opt/cni/bin
