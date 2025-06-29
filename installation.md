@@ -1,40 +1,52 @@
 ## Kubernetes Architecture: Manager & Worker Node Explained
 📌 Your Setup
 
-1x Manager Node (a.k.a. Control Plane)
+*1x Manager Node (a.k.a. Control Plane)
 
-1x Worker Node
+*1x Worker Node
 
-Manager Node (Control Plane)
+🔧 Main Components:
+
+1- Manager Node (Control Plane) :
+
+Component	Description :
+
 This node controls and manages the entire Kubernetes cluster.
 
-🔧 Main Components:
-Component	Description
-kube-apiserver	Central API for communication (kubectl talks to this).
-etcd	Key-value store for cluster state/config.
-kube-scheduler	Assigns new Pods to available nodes.
-kube-controller-manager	Handles replication, node monitoring, etc.
-containerd	Container runtime (runs containers).
+* kube-apiserver	Central API for communication (kubectl talks to this).
+
+* etcd	Key-value store for cluster state/config.
+
+* kube-scheduler	Assigns new Pods to available nodes.
+
+* kube-controller-manager	Handles replication, node monitoring, etc.
+
+* containerd	Container runtime (runs containers).
 
 ✅ Responsibilities:
-Accepts and validates cluster commands (via kubectl).
 
-Schedules pods to run on Worker nodes.
+* Accepts and validates cluster commands (via kubectl).
 
-Monitors the overall cluster health.
+* Schedules pods to run on Worker nodes.
 
-Stores and updates cluster config/state.
+* Monitors the overall cluster health.
 
-🛠️ Worker Node
-This node runs the actual applications (your containers).
+* Stores and updates cluster config/state.
 
-🔧 Main Components:
-Component	Description
+2 - Worker Node :
+
+Component	Description :
+
+ This node runs the actual applications (your containers).
+
 kubelet	Talks to the manager; makes sure pods are running.
+
 kube-proxy	Manages networking for Pods and Services.
+
 containerd	Actually runs the containers.
 
 ✅ Responsibilities:
+
 Runs pods assigned by the manager.
 
 Reports node & pod status to the manager.
