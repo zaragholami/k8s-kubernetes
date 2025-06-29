@@ -1,7 +1,9 @@
-```
+
 # Requirements befor installation
 # check MAC addrress and UUID for be not same Mac in nods 
+```
 ip link
+```
 cat /sys/class/dmi/id/product_uuid
 # disable swap
 # comment section swap in /etc/fstab
@@ -29,5 +31,5 @@ systemctl restart containerd
 wget https://github.com/containernetworking/plugins/releases/download/v1.4.0/cni-plugins-linux-amd64-v1.4.0.tgz
 mkdir -p /opt/cni/bin
 tar -xzvf cni-plugins-linux-amd64-v1.4.0.tgz -C /opt/cni/bin
-```
+
 
