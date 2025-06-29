@@ -55,6 +55,13 @@ Manages networking and container lifecycle.
 
 
 ## Pre-installation Requirements
+
+Set hostname
+
+manager node --> mnf
+
+worker node --> wnf
+
 Ensure Unique MAC Address & UUID 
 ```
 ip link            # Check MAC address
