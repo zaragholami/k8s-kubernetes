@@ -64,5 +64,11 @@ wget https://github.com/containernetworking/plugins/releases/download/v1.4.0/cni
 mkdir -p /opt/cni/bin
 tar -xzvf cni-plugins-linux-amd64-v1.4.0.tgz -C /opt/cni/bin
 ```
-
-
+enable Cgroup Driver
+```
+vi /etc/containerd/config.toml
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+SystemdCgroup = true
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+SystemdCgroup = true
+```
