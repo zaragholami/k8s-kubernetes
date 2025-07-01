@@ -1,10 +1,10 @@
 
-## Install kubelet,kubeadm,kubectl
+### Install kubelet,kubeadm,kubectl
 Add Kubernetes Repository & Update
 ```
 apt update
 apt install -y apt-transport-https ca-certificates curl
-## Add Kubernetes GPG key
+#### Add Kubernetes GPG key
 curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 ```
 ## Add Kubernetes APT repository
