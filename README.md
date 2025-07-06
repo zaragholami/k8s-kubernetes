@@ -1,13 +1,5 @@
 ## Kubernetes Architecture: Manager & Worker Node
 
-📌 Your Setup
-
-1x Manager Node (a.k.a. Control Plane)
-
-1x Worker Node
-
-### 🔧 Main Components
-
 #### 1️⃣ Manager Node (Control Plane)
 
 ----------------------------
