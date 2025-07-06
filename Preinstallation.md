@@ -47,15 +47,13 @@ Verify Swap is Disabled
 ```
 free -m
 ```
-Update System
-```
 disable and stop ufw
 ```
 service ufw stop && service ufw disable 
 ```
+Update System
 ```
 sudo apt update && sudo apt upgrade -y
-
 ```
 Set Static DNS
 Use DNS 78.157.42.100 (Electro).
