@@ -19,13 +19,21 @@ echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.
 apt update
 ```
 ## Install Kubernetes Components
-Install specific version (recommended for stability)
+To install a stable version of kubectl, kubeadm, and kubelet, you should select a version that:
+
+Is not the very latest, as those may still have bugs
+
+Has received multiple patch updates
+
+Matches across all three components (kubectl, kubeadm, kubelet)
+
+
+check version with this command
 ```
-sudo apt install -y kubelet=1.29.* kubeadm=1.29.* kubectl=1.29.*
+apt list -a kubelet  # or kubectl ,kubeadm
 ```
-# OR install latest version
 ```
-sudo apt install -y kubelet kubeadm kubectl
+sudo apt install -y kubelet=1.29.13-1.1 kubeadm=1.29.13-1.1 kubectl=1.29.13-1.1
 ```
 
 ## Prevent Auto-Upgrades (Optional but Recommended)
