@@ -1,3 +1,25 @@
+## Minimum System Requirements per Kubernetes Node
+| Component        | Minimum (Small cluster/test)                          | Recommended (Production)               |
+| ---------------- | ----------------------------------------------------- | -------------------------------------- |
+| **CPU**          | 1 CPU core                                            | 2+ CPU cores                           |
+| **Memory (RAM)** | 2 GB RAM                                              | 4+ GB RAM                              |
+| **Disk Storage** | 10 GB free disk                                       | 20+ GB free SSD recommended            |
+| **Network**      | Reliable network connectivity                         | Low latency, reliable, and redundant   |
+| **OS**           | Linux (Ubuntu 20.04+, CentOS 7+, Debian 10+, RHEL 7+) | Same + kernel optimized for containers |
+| **Swap**         | Disabled (must disable swap)                          | Disabled (must disable swap)           |
+
+## Software Requirements
+
+OS: Linux distributions (Ubuntu, CentOS, Debian, RHEL)
+
+Docker or container runtime: Containerd, CRI-O, Docker (deprecated in latest Kubernetes)
+
+kubeadm, kubelet, kubectl: Match Kubernetes version
+
+Disable swap: swapoff -a and remove or comment swap entries from /etc/fstab
+
+Firewall: Open required ports (e.g., 6443 for API server, 10250 for kubelet, 2379-2380 for etcd)
+
 ## Pre-installation Requirements
 
 Set hostname
@@ -26,6 +48,11 @@ Verify Swap is Disabled
 free -m
 ```
 Update System
+```
+disable and stop ufw
+```
+service ufw stop && service ufw disable 
+```
 ```
 sudo apt update && sudo apt upgrade -y
 
