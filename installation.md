@@ -37,7 +37,7 @@ then ;
 sudo apt install -y kubelet=1.29.13-1.1 kubeadm=1.29.13-1.1 kubectl=1.29.13-1.1
 ```
 
-## Prevent Auto-Upgrades (Optional but Recommended)
+## Prevent Auto-Upgrades
 ```
 apt-mark hold kubelet kubeadm kubectl
 ```
