@@ -32,6 +32,7 @@ check version with this command
 ```
 apt list -a kubelet  # or kubectl ,kubeadm
 ```
+then ;
 ```
 sudo apt install -y kubelet=1.29.13-1.1 kubeadm=1.29.13-1.1 kubectl=1.29.13-1.1
 ```
