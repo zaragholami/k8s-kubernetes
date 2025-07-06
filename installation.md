@@ -35,6 +35,8 @@ apt-mark hold kubelet kubeadm kubectl
 ## Verify Installation
 ```
 kubectl version --client --output=yaml
+```
+```
 kubeadm version
 ```
 
