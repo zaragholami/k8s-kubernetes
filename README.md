@@ -51,7 +51,7 @@ Reports node and pod status to the Control Plane
 
 Manages networking and container lifecycle
 
-![Kubernetes Architecture](diagram.png)
+![Kubernetes Architecture](ArchituctureDiagram.png)
 
 
 
