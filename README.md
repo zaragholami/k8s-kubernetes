@@ -1,4 +1,4 @@
-🧠 Kubernetes Architecture: Manager & Worker Node Explained
+## Kubernetes Architecture: Manager & Worker Node
 
 📌 Your Setup
 
@@ -6,9 +6,9 @@
 
 1x Worker Node
 
-🔧 Main Components
+### 🔧 Main Components
 
-1️⃣ Manager Node (Control Plane)
+#### 1️⃣ Manager Node (Control Plane)
 
 ----------------------------
 
@@ -22,7 +22,7 @@ This node controls and manages the entire Kubernetes cluster.
 | `kube-controller-manager` | Handles replication, node health, and other controllers.  |
 | `containerd`              | Container runtime that actually runs the containers.      |
 
-✅ Responsibilities
+##### ✅ Responsibilities
 
 Accepts and validates cluster commands (kubectl)
 
@@ -31,7 +31,7 @@ Schedules Pods to Worker nodes
 Monitors cluster health
 
 Stores and updates cluster state/config in etcd
-2️⃣ Worker Node
+#### 2️⃣ Worker Node
 
 ------------------------
 
@@ -43,7 +43,7 @@ This node runs your actual applications (containers).
 | `kube-proxy` | Manages networking for Pods and Services.                         |
 | `containerd` | Executes and manages containers.                                  |
 
-✅ Responsibilities
+##### ✅ Responsibilities
 
 Runs Pods assigned by the Manager
 
