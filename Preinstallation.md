@@ -72,6 +72,9 @@ Step 4: Configure containerd
 mkdir -p /etc/containerd
 ```
 ```
+cd /etc/containerd
+```
+```
 containerd config default | sudo tee /etc/containerd/config.toml
 ```
 ```
