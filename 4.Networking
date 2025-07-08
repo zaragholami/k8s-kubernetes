@@ -1,0 +1,27 @@
+Pre-Network Setup: Verify Kubernetes Components
+
+Before installing the networking layer (CNI), verify the core Kubernetes components:
+
+```
+# View all namespaces
+kubectl get namespaces
+
+# View pods in the default namespace
+kubectl get pods
+
+# View system-level pods (control plane components)
+kubectl get pods -n kube-system
+
+# View detailed pod info (includes Node, IP, etc.)
+kubectl get pods -n kube-system -o wide
+
+```
+🔍 Example Output Before Networking Is Applied
+
+```
+NAME                                    READY   STATUS    RESTARTS   AGE     IP       NODE            NOMINATED NODE   READINESS GATES
+coredns-558bd4d5db-8xlfz                0/1     Pending   0          3m      <none>   control-plane   <none>           <none>
+kube-proxy-fhx29                        1/1     Running   0          3m      <none>   control-plane   <none>           <none>
+```
+
+📌 coredns will be in Pending state until a network plugin like Calico is installed.
