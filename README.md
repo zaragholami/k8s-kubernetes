@@ -48,12 +48,7 @@ Manages networking and container lifecycle
 ###### 📘 Documentation
 
 For complete Kubernetes guides and reference materials, visit the [official Kubernetes documentation](https://kubernetes.io/docs/).
-docs/
-  pre-installation.md
-  installation.md
-  post-installation.md
-  networking.md
-  nerdctl.md
+
 
 
 
