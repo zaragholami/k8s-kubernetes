@@ -45,7 +45,7 @@ Manages networking and container lifecycle
 
 ![Kubernetes Architecture](architucturediagram.png)
 
-###### 📘 Documentation
+📘 ***Documentation***
 
 For complete Kubernetes guides and reference materials, visit the [official Kubernetes documentation](https://kubernetes.io/docs/).
 
