@@ -18,6 +18,53 @@
 └── kube-scheduler.yaml
 ```
 <small>So if you want to modify etcd configuration (e.g., add new flags), you'd edit etcd.yaml, and kubelet will restart the etcd Pod with the new config.<small>
+#### etcd Configuration File in Kubernetes (kubeadm)
+In kubeadm-based clusters, etcd runs as a static Pod, and its config is stored in a pod manifest.
+**etcd Pod manifest location**
+```
+/etc/kubernetes/manifests/etcd.yaml
+```
+**🔍 What's inside etcd.yaml?**
+
+It contains the etcd Pod spec and command-line flags passed to etcd, for
+example:
+```
+spec:
+  containers:
+  - command:
+    - etcd
+    - --name=etcd-mnf
+    - --data-dir=/var/lib/etcd
+    - --listen-client-urls=https://127.0.0.1:2379
+    - --advertise-client-urls=https://127.0.0.1:2379
+    - --listen-peer-urls=https://127.0.0.1:2380
+    - --initial-advertise-peer-urls=https://127.0.0.1:2380
+    - --cert-file=/etc/kubernetes/pki/etcd/server.crt
+    - --key-file=/etc/kubernetes/pki/etcd/server.key
+    - --trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt
+    ...
+```
+You can edit this file to change etcd settings — but since it's a static pod, the kubelet will automatically restart etcd with the updated config
+**TLS Configuration**
+etcd uses TLS by default in Kubernetes. The following certificates are required:
+| File                                  | Purpose                 |
+| ------------------------------------- | ----------------------- |
+| `/etc/kubernetes/pki/etcd/ca.crt`     | CA certificate          |
+| `/etc/kubernetes/pki/etcd/server.crt` | etcd server certificate |
+| `/etc/kubernetes/pki/etcd/server.key` | etcd server key         |
+| `/etc/kubernetes/pki/etcd/peer.crt`   | etcd peer certificate   |
+| `/etc/kubernetes/pki/etcd/peer.key`   | etcd peer key           |
+
+These are passed in the etcd pod via flags like `--cert-file`, `--key-file`, etc.
+**Viewing etcd Configuration**
+To view how etcd is currently running:
+```
+kubectl -n kube-system get pod -l component=etcd -o yaml
+```
+Or, check the manifest directly:
+```
+cat /etc/kubernetes/manifests/etcd.yaml
+```
 
 #### 🔍 Reading etcd Content in Kubernetes
 
