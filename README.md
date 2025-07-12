@@ -45,6 +45,30 @@ Manages networking and container lifecycle
 
 ![Kubernetes Architecture](architucturediagram.png)
 
+#### 🔄 Kubernetes API Server Request Flow
+```
+User (kubectl / UI / API client)
+   │
+   └──▶ [API Server]
+            │
+            ├── Authenticate Request (token, cert, webhook)
+            │
+            ├── Authorize Request (RBAC, ABAC, etc.)
+            │
+            ├── Admission Control (validations, mutation)
+            │
+            ├── Validate & Parse Object
+            │
+            ├── Persist Object to Backend (SQLite in K3s / etcd in K8s)
+            │
+            └──▶ [Controller / Scheduler / etc...]
+                        │
+                        ├── Scheduler assigns Pod to Node
+                        │
+                        └──▶ [kubelet on worker node]
+                                     │
+                                     └── Create Pod / Container
+```
 📘 ***Documentation***
 
 For complete Kubernetes guides and reference materials, visit the [official Kubernetes documentation](https://kubernetes.io/docs/).
