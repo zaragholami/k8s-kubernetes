@@ -43,7 +43,7 @@ Reports node and pod status to the Control Plane
 
 Manages networking and container lifecycle
 
-![Kubernetes Architecture](architucturediagram.png)
+![Kubernetes Architecture](k8s-architecture.PNG)
 
 #### 🔄 Kubernetes API Server Request Flow
 ```
