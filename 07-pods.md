@@ -39,7 +39,7 @@ spec:
     ports:
     - containerPort: 80
 ```
-**Apply:**
+**✅ Apply:**
 ```
 kubectl apply -f nginx-pod.yaml
 ```
