@@ -46,24 +46,6 @@ Example output :
 kubectl get nodes
 NAME   STATUS     ROLES           AGE   VERSION
 mnf    NotReady   control-plane   58m   v1.29.13
-wnf    NotReady   <none>          57s   v1.29.13
-```
-Label Node wnf as worker1 in Mnager Node :
-
-Helps identify or select the node in deployments, node selectors, and dashboards
-
-```
-kubectl label node wnf node-role.kubernetes.io/worker=worker1
-```
-then:
-```
-kubectl get nodes
-```
-Will output:
-```
-NAME   STATUS   ROLES           AGE   VERSION
-mnf    Ready    control-plane   20m   v1.29.3
-wnf    Ready    worker1          18m   v1.29.3
 ```
 
 -----------------------------------
@@ -99,6 +81,23 @@ Example Output;
 NAME   STATUS     ROLES           AGE   VERSION
 mnf    NotReady   control-plane   58m   v1.29.13
 wnf    NotReady   <none>          57s   v1.29.13
+```
+Label Node wnf as worker1 in Mnager Node :
+
+Helps identify or select the node in deployments, node selectors, and dashboards
+
+```
+kubectl label node wnf node-role.kubernetes.io/worker=worker1
+```
+then:
+```
+kubectl get nodes
+```
+Will output:
+```
+NAME   STATUS   ROLES           AGE   VERSION
+mnf    Ready    control-plane   20m   v1.29.3
+wnf    Ready    worker1          18m   v1.29.3
 ```
 Then for see Pods Status ;
 ```
