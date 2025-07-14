@@ -39,7 +39,27 @@ View images used by Kubernetes:
 ```
 nerdctl -n k8s.io images
 ```
+**containerd Environment Variables**
 
+`CONTAINERD_ADDRESS` tells your tools where to find the containerd socket file to connect with the containerd service.
+
+`CONTAINERD_NAMESPACE` sets the namespace containerd uses, usually `k8s.io` for Kubernetes workloads
+
+You can add these to your `.bashrc` file to avoid typing `-n k8s.io` every time: 
+```
+echo 'export CONTAINERD_ADDRESS=/run/containerd/containerd.sock' >> ~/.bashrc
+echo 'export CONTAINERD_NAMESPACE=k8s.io' >> ~/.bashrc
+```
+Then reload your shell:
+```
+bash -l
+```
+After this, you can use `nerdctl` commands without the `-n k8s.io` option, for example:
+```
+nerdctl ps -a
+nerdctl exec -it <container-id> sh
+nerdctl images
+```
 #### Documentation
 
 GitHub Repository:
