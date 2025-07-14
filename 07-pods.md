@@ -112,7 +112,7 @@ This doesn’t expose it externally; it just documents it for internal communica
 
 **Optional Additions (Advanced)**
 
-ou can extend your pod YAML with:
+you can extend your pod YAML with:
 
 | Feature       | Field Example                              |
 | ------------- | ------------------------------------------ |
