@@ -1,7 +1,5 @@
 ## Pod Deployment in Kubernetes
 
-You can deploy pods in two ways:
-
 #### 📌 1. Deploy a Pod Directly with Command
 
 This is quick and doesn't require a YAML file. Use it for simple or temporary testing.
