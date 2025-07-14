@@ -23,7 +23,6 @@ kubeadm init \
   --kubernetes-version=v1.29.13 \
   --pod-network-cidr=10.10.0.0/16 \
   --apiserver-advertise-address=192.168.0.100 \
-  --ignore-preflight-errors=NumCPU,Mem \
   --v=5
 ```
 After Your Kubernetes control-plane has initialized successfully!
