@@ -10,7 +10,7 @@
 
 ### Software Requirements
 
-OS: Linux distributions (Ubuntu, CentOS, Debian, RHEL)
+OS: Linux distributions (Ubuntu(22.04 LTS	Jammy-20.04 LTS	Focal), CentOS, Debian, RHEL)
 
 Docker or container runtime: Containerd, CRI-O, Docker (deprecated in latest Kubernetes)
 
