@@ -32,6 +32,7 @@ metadata:
   name: nginx
   labels:
     app: nginx
+    type: backend
 spec:
   containers:
   - name: nginx-container
@@ -77,6 +78,7 @@ metadata:
   name: nginx
   labels:
     app: nginx
+    type: backend
 ```
 **name**: The unique name for the pod in the namespace
 
@@ -129,3 +131,81 @@ you can extend your pod YAML with:
 | ---------- | --------------------------------- | --------------------------------- |
 | Direct CLI | `kubectl run nginx --image=nginx` | Quick testing                     |
 | YAML File  | `kubectl apply -f nginx-pod.yaml` | Reusable, version-controlled code |
+
+**✅ Create Pods Using Controllers (Recommended in Production)**
+
+While you can deploy a single pod directly, it's better to use Kubernetes controllers to manage pod lifecycle automatically. Controllers offer:
+
+-✓ Self-healing (restart on failure)
+
+-✓ Scaling
+
+-✓ Rolling updates
+
+-✓ Resource management
+
+**🔁 1. Deployment (Web Apps, APIs)**
+
+Use when you want multiple **replicas** and **auto-recovery**.
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+```
+**Commands:**
+```
+kubectl apply -f nginx-deployment.yaml
+kubectl get deployments
+kubectl get pods
+kubectl delete -f nginx-deployment.yaml
+```
+**🧹 2. Job (Run Once)**
+
+Use for one-time tasks, scripts, or batch jobs
+```
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hello-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: hello
+        image: busybox
+        command: ["echo", "Hello from job"]
+      restartPolicy: Never
+```
+**💾 3. StatefulSet (Databases)**
+
+Use for apps that need persistent storage and stable identity, like databases.
+
+**🌍 4. DaemonSet (One Pod Per Node)**
+
+Use for node-level agents, like log collectors or monitoring tools
+
+**📋 Summary Table**
+
+| Controller  | Use Case                  | Pod Management | Scaling | Auto Healing |
+| ----------- | ------------------------- | -------------- | ------- | ------------ |
+| Deployment  | Web apps, APIs            | ✅              | ✅       | ✅            |
+| Job         | One-time scripts          | ✅              | ❌       | N/A          |
+| StatefulSet | Databases, message queues | ✅              | ✅       | ✅            |
+| DaemonSet   | Node-level agents         | ✅ (1/node)     | Auto    | ✅            |
+
