@@ -207,3 +207,8 @@ Use for node-level agents, like log collectors or monitoring tools
 | StatefulSet | Databases, message queues | ✅              | ✅       | ✅            |
 | DaemonSet   | Node-level agents         | ✅ (1/node)     | Auto    | ✅            |
 
+#### 🧱 What Is a Static Pod?
+
+**Node-local**: A static Pod is defined by a `YAML/JSON` manifest placed directly on a specific node (typically under `/etc/kubernetes/manifests/`) and is exclusively managed by that node’s kubelet—not by the API server or scheduler 
+
+**Control-plane independence**: Ideal for bootstrapping or running essential components even if the API server is down—commonly used for critical system Pods like `kube-apiserver`, `etcd`, `kube-scheduler`, etc. 
