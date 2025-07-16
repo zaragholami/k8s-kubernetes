@@ -130,7 +130,7 @@ you can extend your pod YAML with:
 | Direct CLI | `kubectl run nginx --image=nginx` | Quick testing                     |
 | YAML File  | `kubectl apply -f nginx-pod.yaml` | Reusable, version-controlled code |
 
-**✅ Create Pods Using Controllers (Recommended in Production)**
+**✅ 3.Create Pods Using Controllers (Recommended in Production)**
 
 While you can deploy a single pod directly, it's better to use Kubernetes controllers to manage pod lifecycle automatically. Controllers offer:
 
@@ -142,7 +142,7 @@ While you can deploy a single pod directly, it's better to use Kubernetes contro
 
 -✓ Resource management
 
-**🔁 1. Deployment (Web Apps, APIs)**
+**🔁 3-1. Deployment (Web Apps, APIs)**
 
 Use when you want multiple **replicas** and **auto-recovery**.
 ```
@@ -173,7 +173,7 @@ kubectl get deployments
 kubectl get pods
 kubectl delete -f nginx-deployment.yaml
 ```
-**🧹 2. Job (Run Once)**
+**🧹 3-2. Job (Run Once)**
 
 Use for one-time tasks, scripts, or batch jobs
 ```
@@ -190,11 +190,11 @@ spec:
         command: ["echo", "Hello from job"]
       restartPolicy: Never
 ```
-**💾 3. StatefulSet (Databases)**
+**💾 3-3. StatefulSet (Databases)**
 
 Use for apps that need persistent storage and stable identity, like databases.
 
-**🌍 4. DaemonSet (One Pod Per Node)**
+**🌍 3-4. DaemonSet (One Pod Per Node)**
 
 Use for node-level agents, like log collectors or monitoring tools
 
