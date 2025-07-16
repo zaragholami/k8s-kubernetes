@@ -212,3 +212,13 @@ Use for node-level agents, like log collectors or monitoring tools
 **Node-local**: A static Pod is defined by a `YAML/JSON` manifest placed directly on a specific node (typically under `/etc/kubernetes/manifests/`) and is exclusively managed by that node’s kubelet—not by the API server or scheduler 
 
 **Control-plane independence**: Ideal for bootstrapping or running essential components even if the API server is down—commonly used for critical system Pods like `kube-apiserver`, `etcd`, `kube-scheduler`, etc. 
+
+#### 🔧 When a Pod is running & you change its YAML
+
+| Desired Action                        | Command                               | Behavior                                       |
+| ------------------------------------- | ------------------------------------- | ---------------------------------------------- |
+| Initial creation                      | `kubectl create -f pod.yaml`          | Creates only if not already present            |
+| Small change (e.g., image, resources) | `kubectl apply -f pod.yaml`           | Incrementally updates only modified fields     |
+| Big change requiring full replacement | `kubectl replace -f pod.yaml`         | Overwrites entire spec; must include full YAML |
+| Force recreate (wipe & recreate)      | `kubectl replace --force -f pod.yaml` | Deletes and recreates Pod (use cautiously)     |
+
