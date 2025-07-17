@@ -33,7 +33,7 @@ spec:
   containers:
   - command:
     - etcd
-    - --name=etcd-mnf
+    - --name=etcd-manager
     - --data-dir=/var/lib/etcd
     - --listen-client-urls=https://127.0.0.1:2379
     - --advertise-client-urls=https://127.0.0.1:2379
