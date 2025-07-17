@@ -1,4 +1,4 @@
-## Manager Node Configuration (Mnf)
+## Manager Node Configuration 
 ---------------------------------
 
  #### kubeadm init Options – CLI vs Config File
@@ -44,12 +44,12 @@ Example output :
 ```
 kubectl get nodes
 NAME   STATUS     ROLES           AGE   VERSION
-mnf    NotReady   control-plane   58m   v1.29.13
+manager    NotReady   control-plane   58m   v1.29.13
 ```
 
 -----------------------------------
 
-## Worker Node Configuration (Wnf) :
+## Worker Node Configuration :
 
 ✅ 1. Get the Worker Join Command
 
@@ -70,7 +70,7 @@ kubeadm join 192.168.0.100:6443 --token abcdef.0123456789abcdef \
 ```
 and use this for join worker node to cluster
 
-🔍 for verify in Mnf :
+🔍 for verify in manager node :
 
 ```
 kubectl get nodes
@@ -78,8 +78,8 @@ kubectl get nodes
 Example Output;
 ```
 NAME   STATUS     ROLES           AGE   VERSION
-mnf    NotReady   control-plane   58m   v1.29.13
-wnf    NotReady   <none>          57s   v1.29.13
+manager    NotReady   control-plane   58m   v1.29.13
+worker1    NotReady   <none>          57s   v1.29.13
 ```
 Label Node wnf as worker1 in Mnager Node :
 
@@ -95,8 +95,8 @@ kubectl get nodes
 Will output:
 ```
 NAME   STATUS   ROLES           AGE   VERSION
-mnf    Ready    control-plane   20m   v1.29.3
-wnf    Ready    worker1          18m   v1.29.3
+manager    Ready    control-plane   20m   v1.29.3
+worker    Ready    worker1          18m   v1.29.3
 ```
 Then for see Pods Status ;
 ```
@@ -108,12 +108,12 @@ Example output;
 NAME                          READY   STATUS    RESTARTS   AGE
 coredns-76f75df574-g8wwj      0/1     Pending   0          145m
 coredns-76f75df574-t9jtf      0/1     Pending   0          145m
-etcd-mnf                      1/1     Running   0          145m
-kube-apiserver-mnf            1/1     Running   0          145m
-kube-controller-manager-mnf   1/1     Running   0          145m
+etcd-manager                      1/1     Running   0          145m
+kube-apiserver-manager            1/1     Running   0          145m
+kube-controller-manager-manager   1/1     Running   0          145m
 kube-proxy-25m7s              1/1     Running   0          88m
 kube-proxy-6mps4              1/1     Running   0          145m
-kube-scheduler-mnf            1/1     Running   0          145m
+kube-scheduler-manager            1/1     Running   0          145m
 ```
 🔍 Verify Cluster Info
 
