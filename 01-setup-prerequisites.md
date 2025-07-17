@@ -26,17 +26,10 @@ Firewall: Open required ports (e.g., 6443 for API server, 10250 for kubelet, 237
 
 Set unique and descriptive hostnames for each node to simplify cluster management.
 
-📌 Recommended Hostnames:
-
-| Node Role               | Hostname |
-| ----------------------- | -------- |
-| Manager (Control Plane) | `mnf`    |
-| Worker                  | `wnf`    |
-
  Apply Hostname
 ```
-hostnamectl set-hostname Mnf
-hostnamectl set-hostname Wnf
+hostnamectl set-hostname Manager
+hostnamectl set-hostname Worker1
 ```
 Then verify ;
 ```
@@ -56,7 +49,7 @@ cat /sys/class/dmi/id/product_uuid    # Check UUID
 🔧 Disable swap
 Kubernetes requires swap to be disabled.
 ```
-sudo sed -i.bak '/ swap / s/^/#/' /etc/fstab
+sudo sed -i '/swap/s/^\//\#\//g' /etc/fstab
 sudo swapoff -a
 ```
 ```
@@ -109,7 +102,7 @@ rm -rf /etc/resolv.conf;echo "nameserver 78.157.42.100  # (Electro)" | sudo tee 
 #### Install containerd (Kubernetes Container Runtime)
 Step 1: Install containerd
 ```
-cd /usr/local/;\
+cd /usr/local/
 wget https://github.com/containerd/containerd/releases/download/v1.6.30/containerd-1.6.30-linux-amd64.tar.gz
 ```
 ```
