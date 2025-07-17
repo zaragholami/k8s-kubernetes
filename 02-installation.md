@@ -70,10 +70,4 @@ echo 'complete -F __start_kubectl k' >> ~/.bashrc
 # Reload .bashrc
 source ~/.bashrc
 ```
-✅ After running this:
-
-Typing kubectl ge[TAB] will auto-complete to kubectl get.
-
-Using `k get po -n kube-system` will also work if you use the alias.
-
 
