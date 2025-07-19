@@ -45,30 +45,50 @@ Manages networking and container lifecycle
 
 ![Kubernetes Architecture](k8s-architecture.PNG)
 
-#### 🔄 Kubernetes API Server Request Flow
+------------------------------------------------------
+
+
+### 🔄 Kubernetes API Server Request Sequence
+
+```mermaid
+sequenceDiagram
+    participant User as User (kubectl/UI/API)
+    participant API_Server as API Server
+    participant Auth as Auth Services
+    participant Backend as Backend (etcd/SQLite)
+    participant Control as Control Plane
+    participant Kubelet as kubelet
+
+    User->>API_Server: API Request
+    API_Server->>Auth: 1. Authenticate (token/cert/webhook)
+    API_Server->>Auth: 2. Authorize (RBAC/ABAC)
+    API_Server->>Auth: 3. Admission Control
+    API_Server->>API_Server: 4. Validate & Parse Object
+    API_Server->>Backend: 5. Persist Object
+    API_Server->>Control: 6. Notify Controllers
+    alt Scheduling Needed
+        Control->>Control: Scheduler: Assign Pod to Node
+        Control->>API_Server: Update Pod Status
+        API_Server->>Kubelet: 7. Notify Assigned Pod
+        Kubelet->>Kubelet: Create Pod/Containers
+        Kubelet->>API_Server: Report Pod Status
+    else Direct Action
+        Control->>Control: Controller Logic
+    end
 ```
-User (kubectl / UI / API client)
-   │
-   └──▶ [API Server]
-            │
-            ├── Authenticate Request (token, cert, webhook)
-            │
-            ├── Authorize Request (RBAC, ABAC, etc.)
-            │
-            ├── Admission Control (validations, mutation)
-            │
-            ├── Validate & Parse Object
-            │
-            ├── Persist Object to Backend (SQLite in K3s / etcd in K8s)
-            │
-            └──▶ [Controller / Scheduler / etc...]
-                        │
-                        ├── Scheduler assigns Pod to Node
-                        │
-                        └──▶ [kubelet on worker node]
-                                     │
-                                     └── Create Pod / Container
+
+-----------------------------------------------
+
+#### 🔄 Responsibilities Summary:
+
+```mermaid
+flowchart LR
+    kubelet[kubelet] --> Runs[Runs Assigned Pods]
+    kubelet --> Reports[Reports Node/Pod Status]
+    kubelet --> Manages[Manages Networking]
+    kubelet --> Lifecycle[Manages Container Lifecycle]
 ```
+
 📘 ***Documentation***
 
 For complete Kubernetes guides and reference materials, visit the [official Kubernetes documentation](https://kubernetes.io/docs/).
