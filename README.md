@@ -1,159 +1,125 @@
-## Kubernetes Architecture: Manager & Worker Node
+# Kubernetes Architecture: Control Plane & Worker Nodes
 
-#### 1️⃣ Manager Node (Control Plane)
-
-----------------------------
-
-This node controls and manages the entire Kubernetes cluster.
+## 🧠 Control Plane (Manager Node)
+Controls and manages the entire Kubernetes cluster
 
 | Component                 | Description                                               |
 | ------------------------- | --------------------------------------------------------- |
-| `kube-apiserver`          | Central API server for communication (kubectl uses this). |
-| `etcd`                    | Key-value store for cluster state/configuration.          |
-| `kube-scheduler`          | Assigns new Pods to available nodes.                      |
-| `kube-controller-manager` | Handles replication, node health, and other controllers.  |
-| `containerd`              | Container runtime that actually runs the containers.      |
+| `kube-apiserver`          | Central API server for communication (kubectl uses this) |
+| `etcd`                    | Key-value store for cluster state/configuration          |
+| `kube-scheduler`          | Assigns new Pods to available nodes                      |
+| `kube-controller-manager` | Handles replication, node health, and controllers        |
+| `containerd`              | Container runtime that runs control plane containers     |
 
-##### ✅ Responsibilities
+### ✅ Control Plane Responsibilities
+- Accepts and validates cluster commands (kubectl)
+- Schedules Pods to Worker nodes
+- Monitors cluster health
+- Stores/updates cluster state in etcd
 
-Accepts and validates cluster commands (kubectl)
-
-Schedules Pods to Worker nodes
-
-Monitors cluster health
-
-Stores and updates cluster state/config in etcd
-#### 2️⃣ Worker Node
-
-------------------------
-
-This node runs your actual applications (containers).
+## ⚙️ Worker Nodes
+Run application workloads in containers
 
 | Component    | Description                                                       |
 | ------------ | ----------------------------------------------------------------- |
-| `kubelet`    | Talks to the Manager node; ensures containers (pods) are running. |
-| `kube-proxy` | Manages networking for Pods and Services.                         |
-| `containerd` | Executes and manages containers.                                  |
+| `kubelet`    | Ensures containers (pods) are running as specified               |
+| `kube-proxy` | Manages networking for Pods and Services                         |
+| `containerd` | Executes and manages application containers                      |
 
-##### ✅ Responsibilities
+### ✅ Worker Node Responsibilities
+- Runs Pods assigned by Control Plane
+- Reports node/pod status to Control Plane
+- Manages container lifecycle
+- Handles pod networking
 
-Runs Pods assigned by the Manager
+---
 
-Reports node and pod status to the Control Plane
-
-Manages networking and container lifecycle
-
-
+## 📊 Cluster Architecture Overview
 ```mermaid
 flowchart TB
+    title["Kubernetes Cluster Architecture"]:::title
+    
     subgraph CLUSTER["CLUSTER"]
-        subgraph CONTROL_PLANE["CONTROL PLANE"]
-            subgraph Cloud_Components[" "]
-                ccm[cloud-controller-manager]
-                cp[cloud-player]
-            end
+        subgraph CONTROL_PLANE["Control Plane"]
+            direction TB
+            api["kube-apiserver"]:::important
+            etcd["etcd"]:::important
+            sched["kube-scheduler"]
+            ctrl_mgr["kube-controller-manager"]
+            cloud_ctrl["cloud-controller-manager"]
         end
         
-        subgraph Node_app_server["Node app server"]
-            s[scheduler]
-            ks[kube-scheduler]
-            cm[controller-manager]
-            kcm[kube-controller-manager]
+        subgraph Worker1["Worker Node 1"]
+            direction TB
+            kubelet1["kubelet"]:::important
+            kproxy1["kube-proxy"]
+            pod1_1["pod"]
+            pod1_2["pod"]
+            pod1_3["pod"]
+            containerd1["containerd"]
         end
         
-        subgraph Node1["Node 1"]
-            k1[kubelet]
-            kp1[kube-proxy]
-            p1_1[pod]
-            p1_2[pod]
-            p1_3[pod]
-            cri1[CRI]
-        end
-        
-        subgraph Node2["Node 2"]
-            k2[kubelet]
-            kp2[kube-proxy]
-            p2_1[pod]
-            cri2[CRI]
+        subgraph Worker2["Worker Node 2"]
+            direction TB
+            kubelet2["kubelet"]:::important
+            kproxy2["kube-proxy"]
+            pod2_1["pod"]
+            containerd2["containerd"]
         end
     end
     
-    classDef controlPlane fill:#f9f,stroke:#333,stroke-width:2px;
-    classDef node fill:#eef,stroke:#333,stroke-width:2px;
-    classDef component fill:#fff,stroke:#aaa;
+    %% Connections
+    CONTROL_PLANE <-.-> Worker1
+    CONTROL_PLANE <-.-> Worker2
     
+    %% Styling
+    classDef title fill:transparent,stroke:transparent,font-size:18px,font-weight:bold
+    classDef controlPlane fill:#e6f7ff,stroke:#1890ff,stroke-width:2px;
+    classDef worker fill:#f6ffed,stroke:#52c41a,stroke-width:2px;
+    classDef important fill:#fff1f0,stroke:#f5222d,stroke-width:2px;
+    classDef component fill:#fff,stroke:#ddd;
+    
+    class title title;
     class CONTROL_PLANE controlPlane;
-    class Node1,Node2,Node_app_server node;
-    class ccm,cp,s,ks,cm,kcm,k1,kp1,p1_1,p1_2,p1_3,cri1,k2,kp2,p2_1,cri2 component;
+    class Worker1,Worker2 worker;
+    class api,etcd,kubelet1,kubelet2 important;
+    class sched,ctrl_mgr,cloud_ctrl,kproxy1,kproxy2,pod1_1,pod1_2,pod1_3,containerd1,pod2_1,containerd2 component;
 ```
+-------------------------------------------
 
-
-------------------------------------------------------
-
-
-### 🔄 Kubernetes API Server Request Sequence
+#### 🔄 API Server Request Flow
 
 ```mermaid
 sequenceDiagram
+    autonumber
     participant User as User (kubectl/UI/API)
-    participant API_Server as API Server
+    participant API as API Server
     participant Auth as Auth Services
-    participant Backend as Backend (etcd/SQLite)
-    participant Control as Control Plane
-    participant Kubelet as kubelet
-
-    User->>API_Server: API Request
-    API_Server->>Auth: 1. Authenticate (token/cert/webhook)
-    API_Server->>Auth: 2. Authorize (RBAC/ABAC)
-    API_Server->>Auth: 3. Admission Control
-    API_Server->>API_Server: 4. Validate & Parse Object
-    API_Server->>Backend: 5. Persist Object
-    API_Server->>Control: 6. Notify Controllers
-    alt Scheduling Needed
-        Control->>Control: Scheduler: Assign Pod to Node
-        Control->>API_Server: Update Pod Status
-        API_Server->>Kubelet: 7. Notify Assigned Pod
-        Kubelet->>Kubelet: Create Pod/Containers
-        Kubelet->>API_Server: Report Pod Status
-    else Direct Action
-        Control->>Control: Controller Logic
-    end
+    participant etcd as etcd
+    participant Scheduler
+    participant Kubelet
+    
+    User->>API: ① API Request
+    API->>Auth: ② Authenticate
+    API->>Auth: ③ Authorize (RBAC)
+    API->>Auth: ④ Admission Control
+    API->>API: ⑤ Validate & Parse
+    API->>etcd: ⑥ Persist to Storage
+    API->>Scheduler: ⑦ Notify Scheduler
+    Scheduler->>API: ⑧ Assign Node
+    API->>Kubelet: ⑨ Create Pod
+    Kubelet->>Kubelet: ⑩ Start Containers
+    Kubelet->>API: ⑪ Report Status
 ```
+--------------------------------------
 
-**Key Components Explained:**
-
-1.Authentication: Verifies user credentials
-
-2.Authorization: Checks permissions (RBAC/ABAC)
-
-3.Admission Control: Validates/modifies requests
-
-4.Validation: Ensures object schema correctness
-
-5.Persistence: Stores state in etcd/SQLite
-
-6.Control Plane: Handles controllers/scheduling
-
-7.kubelet: Creates containers and reports status
-
------------------------------------------------
-
-#### 🔄 Responsibilities Summary:
+#### 🛠️ kubelet Responsibilities
 
 ```mermaid
 flowchart LR
-    kubelet[kubelet] --> Runs[Runs Assigned Pods]
-    kubelet --> Reports[Reports Node/Pod Status]
-    kubelet --> Manages[Manages Networking]
-    kubelet --> Lifecycle[Manages Container Lifecycle]
+    kubelet["kubelet"] --> Pods["Run Assigned Pods"]
+    kubelet --> Reporting["Report Node/Pod Status"]
+    kubelet --> Networking["Manage Pod Networking"]
+    kubelet --> Lifecycle["Manage Container Lifecycle"]
+    kubelet --> Resources["Monitor Resource Usage"]
 ```
-
-📘 ***Documentation***
-
-For complete Kubernetes guides and reference materials, visit the [official Kubernetes documentation](https://kubernetes.io/docs/).
-
-
-
-
-
-
