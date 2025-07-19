@@ -43,7 +43,50 @@ Reports node and pod status to the Control Plane
 
 Manages networking and container lifecycle
 
-![Kubernetes Architecture](k8s-architecture.PNG)
+
+```mermaid
+flowchart TB
+    subgraph CLUSTER["CLUSTER"]
+        subgraph CONTROL_PLANE["CONTROL PLANE"]
+            subgraph Cloud_Components[" "]
+                ccm[cloud-controller-manager]
+                cp[cloud-player]
+            end
+        end
+        
+        subgraph Node_app_server["Node app server"]
+            s[scheduler]
+            ks[kube-scheduler]
+            cm[controller-manager]
+            kcm[kube-controller-manager]
+        end
+        
+        subgraph Node1["Node 1"]
+            k1[kubelet]
+            kp1[kube-proxy]
+            p1_1[pod]
+            p1_2[pod]
+            p1_3[pod]
+            cri1[CRI]
+        end
+        
+        subgraph Node2["Node 2"]
+            k2[kubelet]
+            kp2[kube-proxy]
+            p2_1[pod]
+            cri2[CRI]
+        end
+    end
+    
+    classDef controlPlane fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef node fill:#eef,stroke:#333,stroke-width:2px;
+    classDef component fill:#fff,stroke:#aaa;
+    
+    class CONTROL_PLANE controlPlane;
+    class Node1,Node2,Node_app_server node;
+    class ccm,cp,s,ks,cm,kcm,k1,kp1,p1_1,p1_2,p1_3,cri1,k2,kp2,p2_1,cri2 component;
+```
+
 
 ------------------------------------------------------
 
@@ -76,6 +119,22 @@ sequenceDiagram
         Control->>Control: Controller Logic
     end
 ```
+
+**Key Components Explained:**
+
+1.Authentication: Verifies user credentials
+
+2.Authorization: Checks permissions (RBAC/ABAC)
+
+3.Admission Control: Validates/modifies requests
+
+4.Validation: Ensures object schema correctness
+
+5.Persistence: Stores state in etcd/SQLite
+
+6.Control Plane: Handles controllers/scheduling
+
+7.kubelet: Creates containers and reports status
 
 -----------------------------------------------
 
