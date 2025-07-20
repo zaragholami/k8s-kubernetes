@@ -1,106 +1,135 @@
-#### Pre-Network Setup: Verify Kubernetes Components
+# Kubernetes Networking Setup Guide
 
-Before installing the networking layer (CNI), verify the core Kubernetes components:
+## Pre-Network Verification
+Before installing CNI, verify cluster components:
 
-```
-# View all namespaces
+```bash
+# Check core namespaces
 kubectl get namespaces
 
-# View pods in the default namespace
-kubectl get pods
-
-# View system-level pods (control plane components)
-kubectl get pods -n kube-system
-
-# View detailed pod info (includes Node, IP, etc.)
+# Verify system pods
 kubectl get pods -n kube-system -o wide
-
 ```
-🔍 Example Output Before Networking Is Applied
-
+**Expected Output (Before CNI):**
+```text
+NAME                                    READY   STATUS    RESTARTS   AGE     IP       NODE     
+coredns-558bd4d5db-8xlfz                0/1     Pending   0          3m      <none>   control-plane
+kube-proxy-fhx29                        1/1     Running   0          3m      <none>   control-plane
 ```
-NAME                                    READY   STATUS    RESTARTS   AGE     IP       NODE            NOMINATED NODE   READINESS GATES
-coredns-558bd4d5db-8xlfz                0/1     Pending   0          3m      <none>   control-plane   <none>           <none>
-kube-proxy-fhx29                        1/1     Running   0          3m      <none>   control-plane   <none>           <none>
-```
+🔍 CoreDNS will show `Pending` status until CNI is installed
 
-📌 coredns will be in Pending state until a network plugin like Calico is installed.
+### `Calico CNI Installation`
 
-✅ `kubectl apply`
-Purpose: Creates or updates Kubernetes resources based on a YAML/JSON file.
-Use Case: When you want to deploy or update apps, configs, services, etc.
+**Why Calico?**
 
-❌ `kubectl delete`
-Purpose: Deletes Kubernetes resources defined in a YAML file or by name.
-Use Case: When you want to remove resources from the cluster
+- 🔒 Built-in network policies for security
 
-#### Installing Calico (Recommended CNI)
+- 🚀 High-performance eBPF dataplane
 
-To enable pod-to-pod networking, install Calico in Manager Node :
-```
+- ☁️ Cloud/on-prem hybrid support
+
+- 📡 BGP/IP-in-IP networking flexibility
+
+- 🔧 Production-grade stability
+
+#### Install Calico
+```bash
+# Install latest stable version
 kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/calico.yaml
 ```
- Why Calico?
- 
-Calico is chosen because:
-
-🔒 Security-first design: Built-in support for Kubernetes NetworkPolicies and eBPF.
-
-🚀 High performance: Uses efficient Linux kernel routing (or eBPF mode) for fast data paths.
-
-📡 Flexible networking: Supports both BGP and IP-in-IP modes.
-
-☁️ Cloud & on-prem friendly: Works seamlessly in bare metal and cloud environments.
-
-🔧 Active community and long-term support with extensive documentation.
-
-Calico is widely adopted in production-grade Kubernetes clusters due to its balance of simplicity, performance, and security.
-
-🔄 Example: Immediately After Applying Calico
-
-```
-kubectl get pods -n kube-system
-```
-```
-NAME                                       READY   STATUS              RESTARTS   AGE
-calico-kube-controllers-7c579b9bcd-dm9r4   0/1     ContainerCreating   0          15s
-calico-node-gmcqf                          0/1     ContainerCreating   0          15s
-coredns-558bd4d5db-8xlfz                   0/1     Pending             0          3m
-coredns-558bd4d5db-lrkdn                   0/1     Pending             0          3m
-etcd-control-plane                         1/1     Running             0          3m
-kube-apiserver-control-plane               1/1     Running             0          3m
-kube-controller-manager-control-plane      1/1     Running             0          3m
-kube-proxy-btx8c                           1/1     Running             0          3m
-kube-scheduler-control-plane               1/1     Running             0          3m
-```
-⏳ What to Expect
-ContainerCreating: The node is pulling images, setting up volumes, networking, etc.
-
-This should transition to Running within 1–2 minutes if everything is correct.
-
-✅ To Monitor Progress:
-
-You can run:
-```
+**Verify Installation**
+``bash
 watch kubectl get pods -n kube-system
 ```
-or check logs/events if it takes too long:
+**Expected Progression:**
+```text
+NAME                                       READY   STATUS              RESTARTS   AGE
+calico-kube-controllers-7c579b9bcd-dm9r4   0/1     ContainerCreating   0          15s
+calico-node-gmcqf                          0/1     Init:0/1            0          15s
 ```
-kubectl describe pod <pod-name> -n kube-system
+→ Within 1-2 minutes →
+```text
+NAME                                       READY   STATUS    RESTARTS   AGE
+calico-kube-controllers-7c579b9bcd-dm9r4   1/1     Running   0          2m
+calico-node-gmcqf                          1/1     Running   0          2m
+coredns-558bd4d5db-8xlfz                   1/1     Running   0          5m
 ```
-Remove Taint from Control Plane Node (for Single-Node Clusters)
+**Post-Install Checks**
+```bash
+# Verify all system pods
+kubectl get pods -n kube-system
+
+# Check network components
+kubectl get daemonsets -n kube-system
 ```
+#### Single-Node Cluster Configuration
+
+Remove taint to allow workload scheduling:
+```bash
 kubectl taint nodes --all node-role.kubernetes.io/control-plane-
 ```
-🔍 Why Do This?
+⚠️ Only required for single-node clusters. Production clusters should maintain taints.
 
-In single-node clusters, the control-plane node is tainted to prevent regular workloads from being scheduled on it. If you don’t remove the taint, any pod that isn’t “tolerating” it will stay in Pending state
+#### Network Verification Tests
 
-Example Problem:
+**1. DNS Resolution Test**
+```bash
+kubectl run dns-test --image=busybox:1.28 --restart=Never --rm -it -- \
+  sh -c "nslookup kubernetes.default"
 ```
-$ kubectl get pods
-NAME        READY   STATUS    RESTARTS   AGE
-nginx       0/1     Pending   0          1m
+**2. Pod-to-Pod Connectivity**
+```bash
+kubectl run ping-test --image=alpine --restart=Never -- \
+  sh -c "ping -c 4 google.com"
+```
+**3. Network Policy Validation**
+```bash
+# Create test policy
+cat <<EOF | kubectl apply -f -
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: test-deny-all
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+EOF
+
+# Verify policy enforcement
+kubectl describe networkpolicy test-deny-all
+```
+**Troubleshooting Guide**
+
+**Common Issues & Solutions**
+
+## Common Issues & Solutions
+
+| Symptom                         | Solution                                                                 |
+|---------------------------------|--------------------------------------------------------------------------|
+| CoreDNS pending                 | Verify Calico installation logs using `kubectl logs -n kube-system -l k8s-app=calico-node` |
+| Calico pods stuck in Init      | Check required kernel modules: `lsmod | grep ip_tables`                  |
+| Inter-pod connectivity fails   | Validate IP pools with: `kubectl get ippools.crd.projectcalico.org`     |
+| Network policies not enforced  | Confirm Calico is in eBPF mode: `calicoctl get felixconfiguration default -o yaml` |
+
+**Diagnostic Commands**
+```bash
+# Check Calico node status
+kubectl exec -it <calico-pod> -n kube-system -- calico-node -status
+
+# View CNI configuration
+cat /etc/cni/net.d/10-calico.conflist
+
+# Inspect kubelet logs
+journalctl -u kubelet -f | grep -i cni
+```
+**Log Inspection**
+```bash
+# Calico controller logs
+kubectl logs -n kube-system -l k8s-app=calico-kube-controllers
+
+# Calico node logs
+kubectl logs -n kube-system -l k8s-app=calico-node
 ```
 
 
