@@ -1,134 +1,115 @@
-## Manager Node Configuration 
----------------------------------
+# Kubernetes Cluster Configuration Guide
 
- #### kubeadm init Options – CLI vs Config File
- | Option                       | CLI Flag                        | Config File Path (YAML)                                        | Example Value    |
-| ---------------------------- | ------------------------------- | -------------------------------------------------------------- | ---------------- |
-| API Server Advertise Address | `--apiserver-advertise-address` | Not in YAML directly — set by the node’s network configuration | `192.168.0.100` |
-| Kubernetes Version           | `--kubernetes-version`          | `ClusterConfiguration.kubernetesVersion`                       | `v1.29.13`       |
-| Pod Network CIDR             | `--pod-network-cidr`            | `ClusterConfiguration.networking.podSubnet`                    | `10.10.0.0/16`   |
+## Manager Node Setup
 
-✅ Notes:
+### kubeadm Init Options
+| Option                       | CLI Flag                        | Config File Path (YAML)             | Example Value      |
+|------------------------------|---------------------------------|-------------------------------------|--------------------|
+| API Server Advertise Address | `--apiserver-advertise-address` | Node network configuration          | `192.168.0.100`    |
+| Kubernetes Version           | `--kubernetes-version`          | `ClusterConfiguration.kubernetesVersion` | `v1.29.13`         |
+| Pod Network CIDR             | `--pod-network-cidr`            | `ClusterConfiguration.networking.podSubnet` | `10.10.0.0/16`     |
 
---apiserver-advertise-address: should be the manager node’s IP address.
+**Key Notes**:
+- `--apiserver-advertise-address`: Manager node's IP accessible by workers
+- `--pod-network-cidr`: Must match your CNI plugin's requirements
+- `--ignore-preflight-errors=NumCPU,Mem`: Bypasses resource checks for lab environments
+- `--v=5`: Enables verbose debugging output
 
---pod-network-cidr: internal network range for pods (used by the CNI plugin).
+### Initialize Control Plane
 
---ignore-preflight-errors=NumCPU,Mem: skips low CPU/RAM errors (helpful in test/lab environments).
-
---v=5: sets verbosity to level 5 (for debug output).
-
-```
+```bash
 kubeadm init \
   --kubernetes-version=v1.29.13 \
   --pod-network-cidr=10.10.0.0/16 \
   --apiserver-advertise-address=192.168.0.100 \
   --v=5
 ```
-After Your Kubernetes control-plane has initialized successfully!
+#### Configure kubectl Access
 
-To start using your cluster, you need to run the following as a regular user:
-```
-  mkdir -p $HOME/.kube;
-  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config;
-  sudo chown $(id -u):$(id -g) $HOME/.kube/config;
-```
-```
-export KUBECONFIG=/etc/kubernetes/admin.conf
-```
+After successful initialization:
+```bash
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
+# Optional: Persist configuration
+echo 'export KUBECONFIG=/etc/kubernetes/admin.conf' | sudo tee -a /etc/profile
+source /etc/profile
 ```
-kubectl get node
-```
-Example output :
-```
+#### Verify Manager Node
+```bash
 kubectl get nodes
-NAME   STATUS     ROLES           AGE   VERSION
-manager    NotReady   control-plane   58m   v1.29.13
 ```
+Example output:
 
------------------------------------
-
-## Worker Node Configuration :
-
-✅ 1. Get the Worker Join Command
-
-Right after running kubeadm init in Mnf, it usually prints a kubeadm join command like this:
+```bash
+NAME      STATUS     ROLES           AGE   VERSION
+manager   NotReady   control-plane   58m   v1.29.13
 ```
-kubeadm join <CONTROL_PLANE_IP>:6443 --token <token> --discovery-token-ca-cert-hash sha256:<hash>
-```
-If you didn’t save it, no problem — you can regenerate it:
+#### Worker Node Setup
 
-🔁 Re-generate the join command in Manager Node :
-```
+**Join Worker to Cluster**
+
+1.Get join command from manager node:
+```bash
 kubeadm token create --print-join-command
 ```
 Example output:
-```
+```text
 kubeadm join 192.168.0.100:6443 --token abcdef.0123456789abcdef \
   --discovery-token-ca-cert-hash sha256:0123456789abcdef...1234
 ```
-and use this for join worker node to cluster
+2.Run join command on worker node
 
-🔍 for verify in manager node :
+**Verify Node Join**
 
+On manager node:
+```bash
+watch kubectl get nodes  # Monitor join progress
 ```
+Example output:
+```text
+NAME      STATUS     ROLES           AGE   VERSION
+manager   NotReady   control-plane   58m   v1.29.13
+worker1   NotReady   <none>          57s   v1.29.13
+```
+**Label Worker Node**
+```bash
+kubectl label node worker1 node-role.kubernetes.io/worker=worker1
+```
+Verify:
+```bash
 kubectl get nodes
 ```
-Example Output;
+```text
+NAME      STATUS   ROLES           AGE   VERSION
+manager   Ready    control-plane   20m   v1.29.3
+worker1   Ready    worker1         18m   v1.29.3
 ```
-NAME   STATUS     ROLES           AGE   VERSION
-manager    NotReady   control-plane   58m   v1.29.13
-worker1    NotReady   <none>          57s   v1.29.13
-```
-Label Node wnf as worker1 in Mnager Node :
+#### Cluster Verification
 
-Helps identify or select the node in deployments, node selectors, and dashboards
-
+**Check System Pods**
+```bash
+kubectl get pods -n kube-system
 ```
-kubectl label node wnf node-role.kubernetes.io/worker=worker1
+Expected once CNI is installed:
+```text
+NAME                                       READY   STATUS    RESTARTS   AGE
+calico-kube-controllers-5f6546844f-2j6kd   1/1     Running   0          5m
+calico-node-abcde                          1/1     Running   0          5m
+coredns-76f75df574-g8wwj                   1/1     Running   0          145m
+etcd-manager                               1/1     Running   0          145m
 ```
-then:
-```
-kubectl get nodes
-```
-Will output:
-```
-NAME   STATUS   ROLES           AGE   VERSION
-manager    Ready    control-plane   20m   v1.29.3
-worker    Ready    worker1          18m   v1.29.3
-```
-Then for see Pods Status ;
-```
-kubectl get pod -n kube-system  #-n or--namespace
-```
-Example output;
-
-```
-NAME                          READY   STATUS    RESTARTS   AGE
-coredns-76f75df574-g8wwj      0/1     Pending   0          145m
-coredns-76f75df574-t9jtf      0/1     Pending   0          145m
-etcd-manager                      1/1     Running   0          145m
-kube-apiserver-manager            1/1     Running   0          145m
-kube-controller-manager-manager   1/1     Running   0          145m
-kube-proxy-25m7s              1/1     Running   0          88m
-kube-proxy-6mps4              1/1     Running   0          145m
-kube-scheduler-manager            1/1     Running   0          145m
-```
-🔍 Verify Cluster Info
-
-After setting up your Kubernetes cluster, you can verify its status using:
-```
+**Verify Cluster Health**
+```bash
 kubectl cluster-info
 ```
-Example Output:
-```
+```text
 Kubernetes control plane is running at https://192.168.0.100:6443
 CoreDNS is running at https://192.168.0.100:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
 ```
-This confirms that your control plane and DNS services are up and reachable
-
-
-
-
+**Check Component Status**
+```bash
+kubectl get componentstatuses
+```
 
