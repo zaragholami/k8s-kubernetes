@@ -2,7 +2,7 @@
 
 #### Manager Node Setup
 
- **kubeadm Init Options**
+ kubeadm Init Options
 
 | Option                       | CLI Flag                        | Config File Path (YAML)             | Example Value      |
 |------------------------------|---------------------------------|-------------------------------------|--------------------|
