@@ -1,8 +1,9 @@
-# Kubernetes Cluster Configuration Guide
+### Kubernetes Cluster Configuration Guide
 
-## Manager Node Setup
+#### Manager Node Setup
 
-### kubeadm Init Options
+ **kubeadm Init Options**
+
 | Option                       | CLI Flag                        | Config File Path (YAML)             | Example Value      |
 |------------------------------|---------------------------------|-------------------------------------|--------------------|
 | API Server Advertise Address | `--apiserver-advertise-address` | Node network configuration          | `192.168.0.100`    |
@@ -15,7 +16,7 @@
 - `--ignore-preflight-errors=NumCPU,Mem`: Bypasses resource checks for lab environments
 - `--v=5`: Enables verbose debugging output
 
-### Initialize Control Plane
+#### Initialize Control Plane
 
 ```bash
 kubeadm init \
