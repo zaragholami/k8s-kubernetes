@@ -167,7 +167,7 @@ spec:
 ```
 **Controller Comparison**
 
-# Kubernetes Controllers Comparison
+#### Kubernetes Controllers Comparison
 
 | Controller  | Use Case                 | Scaling | Storage | Network Identity | Node Affinity |
 |-------------|--------------------------|---------|---------|------------------|----------------|
