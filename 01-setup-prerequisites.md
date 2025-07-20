@@ -1,6 +1,7 @@
-# Kubernetes Node Setup Guide
+### Kubernetes Node Setup Guide
 
-## Minimum System Requirements
+#### Minimum System Requirements
+
 | Component        | Minimum (Test/Small)        | Recommended (Production)     |
 |------------------|-----------------------------|------------------------------|
 | **CPU**          | 1 CPU core                  | 2+ CPU cores                 |
@@ -82,9 +83,9 @@ containerd config default | sudo tee /etc/containerd/config.toml
 sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.toml
 sudo systemctl restart containerd
 ```
-### Firewall Configuration
+#### Firewall Configuration
 
-#### Control Plane (Manager)
+**Control Plane (Manager)**
 ```bash
 sudo ufw allow 6443/tcp     # API Server
 sudo ufw allow 2379:2380/tcp # etcd
@@ -92,7 +93,7 @@ sudo ufw allow 10250/tcp    # Kubelet
 sudo ufw allow 10259/tcp    # kube-scheduler
 sudo ufw allow 10257/tcp    # kube-controller-manager
 ```
-#### Worker Nodes
+**Worker Nodes**
 ```bash
 sudo ufw allow 10250/tcp
 sudo ufw allow 30000:32767/tcp  # NodePort Services
