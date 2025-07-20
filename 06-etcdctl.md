@@ -1,20 +1,25 @@
-# `/etc/kubernetes/manifests/` & etcd Configuration Guide
+### `/etc/kubernetes/manifests/` & etcd Configuration Guide
 
-## 📁 `/etc/kubernetes/manifests/` Directory
-### Purpose
+#### 📁 `/etc/kubernetes/manifests/` Directory
+
+#### Purpose
 - Static Pod management directory for kubelet
 - Automatically runs/manages control plane components (etcd, API server, etc.)
 - Primarily used in **kubeadm** setups
 
-### ✅ Key Facts
+#### ✅ Key Facts
 - **Format**: YAML manifests (Pod/Deployment specs)
 - **Automation**: Kubelet watches directory → creates/manages Pods
 - **Control Plane Files**:
 
 /etc/kubernetes/manifests/
+
 ├── etcd.yaml
+
 ├── kube-apiserver.yaml
+
 ├── kube-controller-manager.yaml
+
 └── kube-scheduler.yaml
 
 
@@ -22,11 +27,14 @@
 
 ---
 
-## 🔧 etcd Configuration (kubeadm)
-### Location
+#### 🔧 etcd Configuration (kubeadm)
+
+#### Location
+
 `/etc/kubernetes/manifests/etcd.yaml`
 
-### Sample Configuration
+**Sample Configuration**
+
 ```yaml
 spec:
 containers:
@@ -42,6 +50,7 @@ containers:
 ```
 
 #### TLS Certificates
+
 | Path                                  | Purpose         |
 |---------------------------------------|------------------|
 | `/etc/kubernetes/pki/etcd/ca.crt`     | CA Certificate   |
