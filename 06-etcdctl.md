@@ -91,6 +91,7 @@ etcdctl ... get /registry/clusterrolebindings/cluster-admin
 
 > ⚠️ Output is in Protobuf format (not human-readable)
 
+
 ⚠️ **Use Cases & Warnings**
 
 ✅ Valid Use Cases
