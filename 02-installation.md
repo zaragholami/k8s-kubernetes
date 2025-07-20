@@ -2,7 +2,7 @@
 
 ## Install kubelet, kubeadm, and kubectl
 
-### 1. Add Kubernetes Repository
+#### 1. Add Kubernetes Repository
 ```bash
 # Update package index
 sudo apt update
