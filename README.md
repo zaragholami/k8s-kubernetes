@@ -1,6 +1,6 @@
-# Kubernetes Architecture: Control Plane & Worker Nodes
+### Kubernetes Architecture: Control Plane & Worker Nodes
 
-## 🧠 Control Plane (Manager Node)
+#### 🧠 Control Plane (Manager Node)
 Controls and manages the entire Kubernetes cluster
 
 | Component                 | Description                                               |
@@ -11,13 +11,14 @@ Controls and manages the entire Kubernetes cluster
 | `kube-controller-manager` | Handles replication, node health, and controllers        |
 | `containerd`              | Container runtime that runs control plane containers     |
 
-### ✅ Control Plane Responsibilities
+**✅ Control Plane Responsibilities**
 - Accepts and validates cluster commands (kubectl)
 - Schedules Pods to Worker nodes
 - Monitors cluster health
 - Stores/updates cluster state in etcd
 
-## ⚙️ Worker Nodes
+**⚙️ Worker Nodes**
+
 Run application workloads in containers
 
 | Component    | Description                                                       |
@@ -26,7 +27,7 @@ Run application workloads in containers
 | `kube-proxy` | Manages networking for Pods and Services                         |
 | `containerd` | Executes and manages application containers                      |
 
-### ✅ Worker Node Responsibilities
+#### ✅ Worker Node Responsibilities
 - Runs Pods assigned by Control Plane
 - Reports node/pod status to Control Plane
 - Manages container lifecycle
@@ -34,7 +35,7 @@ Run application workloads in containers
 
 ---
 
-## 📊 Cluster Architecture Overview
+#### 📊 Cluster Architecture Overview
 ```mermaid
 flowchart TB
     title["Kubernetes Cluster Architecture"]:::title
