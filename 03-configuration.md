@@ -25,6 +25,21 @@ kubeadm init \
   --apiserver-advertise-address=192.168.0.100 \
   --v=5
 ```
+#### Initialize Control Plane (YAML example)
+
+```yml
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: ClusterConfiguration
+kubernetesVersion: v1.29.13
+networking:
+  podSubnet: 10.10.0.0/16
+controlPlaneEndpoint: "192.168.0.100:6443"
+```
+Run with:
+
+```bash
+kubeadm init --config=kubeadm-config.yml
+```
 #### Configure kubectl Access
 
 After successful initialization:
