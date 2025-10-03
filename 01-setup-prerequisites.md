@@ -108,6 +108,14 @@ free -h | grep Swap
 
 # Confirm IP forwarding
 cat /proc/sys/net/ipv4/ip_forward
+
+cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
+overlay
+br_netfilter
+EOF
+
+sudo systemctl restart systemd-modules-load
+
 ```
 #### Post-Installation Notes
 
